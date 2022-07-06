@@ -1,14 +1,19 @@
-﻿using System;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Wrapper;
 
 
 namespace Ponger
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.WriteLine("Hello World!");
+            while(true)
+            {
+                RabbitMQImplementation.SendMessageToQueue(ConstantValues.PingQueue, "Pong");
+                Thread.Sleep(5000);
+                RabbitMQImplementation.ListenQueue(ConstantValues.PongQueue);
+                Thread.Sleep(5000);
+            }
         }
     }
 }
