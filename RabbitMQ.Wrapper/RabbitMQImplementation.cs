@@ -45,11 +45,11 @@ namespace RabbitMQ.Wrapper
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                var name = channel.QueueDeclare(queue: routingKey,
+                channel.QueueDeclare(queue: routingKey,
                                  durable: true,
                                  exclusive: false,
                                  autoDelete: false,
-                                 arguments: null).QueueName;
+                                 arguments: null);
 
                 var body = Encoding.UTF8.GetBytes(message);
 
