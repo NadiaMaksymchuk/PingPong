@@ -7,13 +7,11 @@ namespace Pinger
     {
         static void Main()
         {
-            while(true)
+            while (true)
             {
-                
                 RabbitMQImplementation.ListenQueue(ConstantValues.PingQueue);
-                Thread.Sleep(5000);
+                Thread.Sleep(2500);
                 RabbitMQImplementation.SendMessageToQueue(ConstantValues.PongQueue, "Ping");
-                Thread.Sleep(5000);
             }
         }
     }

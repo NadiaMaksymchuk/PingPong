@@ -7,13 +7,14 @@ namespace Ponger
     {
         static void Main()
         {
-            while(true)
-            {
+            while (true)
+            { 
                 RabbitMQImplementation.SendMessageToQueue(ConstantValues.PingQueue, "Pong");
-                Thread.Sleep(5000);
+                
                 RabbitMQImplementation.ListenQueue(ConstantValues.PongQueue);
-                Thread.Sleep(5000);
+                Thread.Sleep(2500);
             }
         }
     }
+
 }

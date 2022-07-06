@@ -10,31 +10,28 @@ namespace RabbitMQ.Wrapper
 {
     public static class RabbitMQImplementation
     {
+        private static string exchangeName = "direct_logs";
+
         public static void ListenQueue(string routingKey)
         {
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchange: "direct_logs",
-                                        type: "direct");
-                var queueName = channel.QueueDeclare().QueueName;
-
-                
-                    channel.QueueBind(queue: queueName,
-                                      exchange: "direct_logs",
-                                      routingKey: routingKey);
-
-                Console.WriteLine(" [*] Waiting for messages." + channel.ChannelNumber);
-
+                var queueName = channel.QueueDeclare(queue: routingKey,
+                                 durable: true,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null).QueueName;
+               
                 var consumer = new EventingBasicConsumer(channel);
                 consumer.Received += (model, ea) =>
                 {
                     var body = ea.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
                     var routingKey = ea.RoutingKey;
-                    Console.WriteLine("Received '{0}':'{1}'",
-                                      routingKey, message);
+                    Console.WriteLine("'{0}':'{1}'",
+                                      DateTime.Now, message);
                 };
                 channel.BasicConsume(queue: queueName,
                                      autoAck: true,
@@ -48,16 +45,18 @@ namespace RabbitMQ.Wrapper
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchange: "direct_logs",
-                                        type: "direct");
+                var name = channel.QueueDeclare(queue: routingKey,
+                                 durable: true,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null).QueueName;
+
                 var body = Encoding.UTF8.GetBytes(message);
 
-                channel.BasicPublish(exchange: "direct_logs",
+                channel.BasicPublish(exchange: "",
                                      routingKey: routingKey,
                                      basicProperties: null,
                                      body: body);
-
-                Console.WriteLine(" [x] Sent '{0}':'{1}'", routingKey, message);
             }
         }
     }
